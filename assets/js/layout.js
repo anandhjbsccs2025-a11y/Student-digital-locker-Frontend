@@ -2,11 +2,12 @@
 const STUDENT_MENU_BASE = [
   ['student-dashboard.html','fa-th-large','Dashboard'],
   ['profile.html','fa-user','Profile'],
-  ['personal-documents.html','fa-id-card','Personal Documents'],
+  // Removed Personal Documents from dashboard/sidebar as requested.
   ['online-certificates.html','fa-cloud','Online Certificates'],
   ['offline-certificates.html','fa-folder-open','Offline Certificates'],
   ['academic-certificates.html','fa-graduation-cap','Academic Certificates'],
 ];
+
 
 const STUDENT_MENU = STUDENT_MENU_BASE;
 const TEACHER_MENU = [
@@ -23,26 +24,7 @@ function renderLayout(){
   if(!app) return;
   const role = app.getAttribute('data-layout'); // 'student' | 'teacher'
 
-  // Personal details completion gating (student only)
-  let slProfileCompleted = true;
-  if(role === 'student'){
-    try{
-      slProfileCompleted = !!JSON.parse(localStorage.getItem('sl_profile_completed') || 'false');
-    } catch (err){
-      slProfileCompleted = false;
-    }
-  }
-
   let menu = role==='teacher' ? TEACHER_MENU : STUDENT_MENU;
-
-  if(role === 'student' && !slProfileCompleted){
-    // Optional dedicated CTA in sidebar for first-time users.
-    // Keep it pointing to profile.html (same page handles edit/read-only).
-    menu = [
-      ['profile.html','fa-user-edit','Complete Personal Details'],
-      ...menu.filter(([h,i,l]) => h !== 'profile.html')
-    ];
-  }
   let user = {};
   try {
     user = JSON.parse(localStorage.getItem('sl_user')||'{}');
@@ -59,7 +41,6 @@ function renderLayout(){
       <nav>
         ${menu.map(([h,i,l])=>`<a class="nav-item" href="${h}"><i class="fas ${i}"></i>${l}</a>`).join('')}
         <a class="nav-item" href="#" onclick="event.preventDefault();slLogout()"><i class="fas fa-sign-out-alt"></i>Logout</a>
-
       </nav>
     </aside>
     <div class="sl-backdrop"></div>

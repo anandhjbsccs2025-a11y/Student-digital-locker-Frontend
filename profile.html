@@ -17,35 +17,7 @@
       <span class="badge-verified"><i class="fas fa-check-circle me-1"></i>Verified Account</span>
     </div>
 
-    <div class="sl-card profile-form-card" id="personalDetailsCard">
-      <h5 class="mb-4" id="personalDetailsTitle"><i class="fas fa-user-edit me-2"></i>Personal Details</h5>
 
-      <div id="personalDetailsReadOnly" class="d-none">
-        <div class="row g-3">
-          <div class="col-md-6"><small class="text-muted">Full Name</small><div id="roName" class="fw-500"></div></div>
-          <div class="col-md-6"><small class="text-muted">Register Number</small><div id="roReg" class="fw-500"></div></div>
-          <div class="col-md-6"><small class="text-muted">Department</small><div id="roDept" class="fw-500"></div></div>
-          <div class="col-md-6"><small class="text-muted">Class</small><div id="roCls" class="fw-500"></div></div>
-          <div class="col-md-6"><small class="text-muted">UMIS Number</small><div id="roUmis" class="fw-500"></div></div>
-          <div class="col-md-6"><small class="text-muted">Mobile Number</small><div id="roMob" class="fw-500"></div></div>
-        </div>
-        <div class="mt-3 d-flex gap-2 flex-wrap">
-          <button id="editProfileBtn" class="btn btn-primary" type="button"><i class="fas fa-edit me-1"></i>Edit Profile</button>
-        </div>
-      </div>
-
-      <form id="profileForm" class="d-none">
-        <div class="row g-3">
-          <div class="col-md-6"><label class="form-label">Full Name</label><input id="profileName" name="name" class="form-control" required></div>
-          <div class="col-md-6"><label class="form-label">Register Number</label><input id="profileReg" name="reg" class="form-control"></div>
-          <div class="col-md-6"><label class="form-label">Department</label><input id="profileDept" name="dept" class="form-control"></div>
-          <div class="col-md-6"><label class="form-label">Class</label><input id="profileCls" name="cls" class="form-control"></div>
-          <div class="col-md-6"><label class="form-label">UMIS Number</label><input id="profileUmis" name="umis" class="form-control" required></div>
-          <div class="col-md-6"><label class="form-label">Mobile Number</label><input id="profileMob" name="mob" class="form-control" required></div>
-        </div>
-        <button class="btn btn-primary mt-3" type="submit"><i class="fas fa-save me-1"></i>Save Profile</button>
-      </form>
-    </div>
 
     <div class="sl-card profile-form-card">
       <h5 class="mb-4"><i class="fas fa-lock me-2"></i>Change Password</h5>
@@ -98,66 +70,7 @@
     document.getElementById('roMob').textContent = profileData.mob || '-';
   }
 
-  function setPersonalDetailsMode(mode){
-    // mode: 'readonly' | 'edit'
-    const readOnly = document.getElementById('personalDetailsReadOnly');
-    const form = document.getElementById('profileForm');
-    if(mode === 'readonly'){
-      readOnly.classList.remove('d-none');
-      form.classList.add('d-none');
-    } else {
-      readOnly.classList.add('d-none');
-      form.classList.remove('d-none');
-    }
-  }
 
-  function validatePersonalDetails(form){
-    const name = (form.elements.name?.value || '').trim();
-    const umis = (form.elements.umis?.value || '').trim();
-    const mob = (form.elements.mob?.value || '').trim();
-    const dept = (form.elements.dept?.value || '').trim();
-    if(!name || name.length < 3) return slToast('Enter your full name', 'error');
-    if(!dept) return slToast('Department is required', 'error');
-    if(!umis) return slToast('UMIS number required', 'error');
-    if(!mob || !isMobile(mob)) return slToast('Enter a valid 10-digit mobile', 'error');
-    return true;
-  }
-
-  const profileForm = document.getElementById('profileForm');
-  profileForm.addEventListener('submit', (e)=>{
-    e.preventDefault();
-    const ok = validatePersonalDetails(e.target);
-    if(ok !== true) return;
-
-    const formData = Object.fromEntries(new FormData(e.target).entries());
-    const updated = {...profileData, ...formData};
-    profile = updated;
-    user = {...user, ...updated, name: updated.name || user.name};
-    localStorage.setItem('sl_profile', JSON.stringify(profile));
-    localStorage.setItem('sl_user', JSON.stringify(user));
-    localStorage.setItem(PROFILE_COMPLETED_KEY, JSON.stringify(true));
-    profileData = updated;
-    slToast('Profile updated successfully', 'success');
-    populateProfile();
-    setPersonalDetailsMode('readonly');
-  });
-
-  const editProfileBtn = document.getElementById('editProfileBtn');
-  if(editProfileBtn){
-    editProfileBtn.addEventListener('click', ()=>{
-      setPersonalDetailsMode('edit');
-      profileForm.scrollIntoView({behavior:'smooth', block:'center'});
-    });
-  }
-
-
-  // First-time completion gating: hide personal details form after registration completion.
-  populateProfile();
-  if(profileCompleted){
-    setPersonalDetailsMode('readonly');
-  } else {
-    setPersonalDetailsMode('edit');
-  }
 
   document.getElementById('passwordForm').addEventListener('submit', (e)=>{
     e.preventDefault();
