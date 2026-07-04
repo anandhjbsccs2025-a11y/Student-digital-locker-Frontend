@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Search Student - Student Locker</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<link href="assets/css/style.css" rel="stylesheet">
+</head><body>
+<div data-layout="teacher">
+  <div class="page-header"><h2>Search Students</h2></div>
+  <div class="sl-card mb-3">
+    <div class="row g-2">
+      <div class="col-md-4"><input id="q" class="form-control" placeholder="Search by name, register, or UMIS…"></div>
+      <div class="col-md-3"><select id="fDept" class="form-select"><option value="">All Departments</option><option>CSE</option><option>ECE</option><option>EEE</option><option>MECH</option><option>CIVIL</option><option>IT</option></select></div>
+      <div class="col-md-3"><select id="fCls" class="form-select"><option value="">All Classes</option><option>I-A</option><option>I-B</option><option>II-A</option><option>II-B</option><option>III-A</option><option>III-B</option><option>IV-A</option></select></div>
+      <div class="col-md-2 d-grid"><button class="btn btn-primary" onclick="renderResults()"><i class="fas fa-search me-1"></i>Search</button></div>
+    </div>
+  </div>
+  <div class="table-responsive sl-card p-0">
+    <table class="table mb-0"><thead><tr><th>Name</th><th>Register</th><th>Dept</th><th>Class</th><th>UMIS</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="tbody"></tbody></table>
+  </div>
+</div>
+<script src="assets/js/app.js"></script><script src="assets/js/layout.js"></script><script src="assets/js/dashboard.js"></script>
+<script>
+  function renderResults(){
+    const q = document.getElementById('q').value.toLowerCase();
+    const dept = document.getElementById('fDept').value;
+    const cls = document.getElementById('fCls').value;
+    const rows = getStudents().filter(s=>{
+      return (!q || s.name.toLowerCase().includes(q) || s.reg.toLowerCase().includes(q) || (s.umis||'').toLowerCase().includes(q))
+        && (!dept || s.dept===dept) && (!cls || s.cls===cls);
+    });
+    document.getElementById('tbody').innerHTML = rows.length ? rows.map(s=>`
+      <tr>
+        <td>${s.name}</td><td>${s.reg}</td><td>${s.dept}</td><td>${s.cls||'-'}</td><td>${s.umis||'-'}</td>
+        <td>${s.verified?'<span class="badge-verified">Verified</span>':'<span class="badge-pending">Pending</span>'}</td>
+        <td>
+          <a class="btn btn-sm btn-outline-primary" href="verify-student.html?id=${s.id}"><i class="fas fa-eye"></i></a>
+          <a class="btn btn-sm btn-outline-primary" href="verify-student.html?id=${s.id}"><i class="fas fa-edit"></i></a>
+          <button class="btn btn-sm btn-outline-success" onclick="verifyRow(${s.id})"><i class="fas fa-check"></i></button>
+          <button class="btn btn-sm btn-outline-primary" onclick="downloadRow(${s.id})"><i class="fas fa-download"></i></button>
+        </td>
+      </tr>`).join('') : '<tr><td colspan="7" class="text-center text-muted p-4">No students found</td></tr>';
+  }
+  function verifyRow(id){ const l=getStudents(); const s=l.find(x=>x.id===id); if(s){ s.verified=true; saveStudents(l); slToast('Student verified','success'); renderResults(); } }
+  function downloadRow(id){
+    const s = getStudents().find(x=>x.id===id); if(!s) return;
+    const blob = new Blob([JSON.stringify(s,null,2)], {type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = s.reg+'.json'; a.click();
+  }
+  document.getElementById('q').addEventListener('input', renderResults);
+  document.getElementById('fDept').addEventListener('change', renderResults);
+  document.getElementById('fCls').addEventListener('change', renderResults);
+  renderResults();
+</script>
+</body></html>

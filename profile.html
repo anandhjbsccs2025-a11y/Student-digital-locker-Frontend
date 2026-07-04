@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Profile - Student Locker</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<link href="assets/css/style.css" rel="stylesheet"><link href="assets/css/dashboard.css" rel="stylesheet">
+</head><body>
+<div data-layout="student">
+  <div class="page-header"><div><h2>My Profile</h2><p>Manage your personal information, password, and email in one place.</p></div></div>
+  <div class="profile-shell">
+    <div class="sl-card profile-overview">
+      <div class="profile-avatar"><i class="fas fa-user"></i></div>
+      <h4 id="profileSummaryName">Student Name</h4>
+      <p class="text-muted mb-3" id="profileSummaryEmail">student@college.edu</p>
+      <span class="badge-verified"><i class="fas fa-check-circle me-1"></i>Verified Account</span>
+    </div>
+
+    <div class="sl-card profile-form-card">
+      <h5 class="mb-4"><i class="fas fa-user-edit me-2"></i>Personal Details</h5>
+      <form id="profileForm">
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label">Full Name</label><input id="profileName" name="name" class="form-control" required></div>
+          <div class="col-md-6"><label class="form-label">Register Number</label><input id="profileReg" name="reg" class="form-control"></div>
+          <div class="col-md-6"><label class="form-label">Department</label><input id="profileDept" name="dept" class="form-control"></div>
+          <div class="col-md-6"><label class="form-label">Class</label><input id="profileCls" name="cls" class="form-control"></div>
+          <div class="col-md-6"><label class="form-label">UMIS Number</label><input id="profileUmis" name="umis" class="form-control"></div>
+          <div class="col-md-6"><label class="form-label">Mobile Number</label><input id="profileMob" name="mob" class="form-control"></div>
+        </div>
+        <button class="btn btn-primary mt-3" type="submit"><i class="fas fa-save me-1"></i>Save Profile</button>
+      </form>
+    </div>
+
+    <div class="sl-card profile-form-card">
+      <h5 class="mb-4"><i class="fas fa-lock me-2"></i>Change Password</h5>
+      <form id="passwordForm">
+        <div class="mb-3"><label class="form-label">Current Password</label><input name="current" type="password" class="form-control" required></div>
+        <div class="mb-3"><label class="form-label">New Password</label><input name="next" type="password" class="form-control" required></div>
+        <div class="mb-3"><label class="form-label">Confirm Password</label><input name="confirm" type="password" class="form-control" required></div>
+        <button class="btn btn-outline-primary" type="submit"><i class="fas fa-key me-1"></i>Update Password</button>
+      </form>
+    </div>
+
+    <div class="sl-card profile-form-card">
+      <h5 class="mb-4"><i class="fas fa-envelope me-2"></i>Change Email</h5>
+      <form id="emailForm">
+        <div class="mb-3"><label class="form-label">New Email Address</label><input id="profileEmailInput" name="email" type="email" class="form-control" required></div>
+        <div class="mb-3"><label class="form-label">Confirm Email</label><input name="confirmEmail" type="email" class="form-control" required></div>
+        <button class="btn btn-outline-primary" type="submit"><i class="fas fa-envelope me-1"></i>Update Email</button>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="assets/js/app.js"></script><script src="assets/js/layout.js"></script>
+<script>
+  let user = JSON.parse(localStorage.getItem('sl_user')||'{}');
+  let profile = JSON.parse(localStorage.getItem('sl_profile')||'{}');
+  let profileData = {...user, ...profile};
+
+  function populateProfile(){
+    profileData = {...user, ...profile};
+    document.getElementById('profileSummaryName').textContent = profileData.name || 'Student Name';
+    document.getElementById('profileSummaryEmail').textContent = profileData.email || 'student@college.edu';
+    document.getElementById('profileName').value = profileData.name || '';
+    document.getElementById('profileReg').value = profileData.reg || '';
+    document.getElementById('profileDept').value = profileData.dept || '';
+    document.getElementById('profileCls').value = profileData.cls || '';
+    document.getElementById('profileUmis').value = profileData.umis || '';
+    document.getElementById('profileMob').value = profileData.mob || '';
+    document.getElementById('profileEmailInput').value = profileData.email || '';
+  }
+
+  document.getElementById('profileForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const formData = Object.fromEntries(new FormData(e.target).entries());
+    const updated = {...profileData, ...formData};
+    profile = updated;
+    user = {...user, ...updated, name: updated.name || user.name};
+    localStorage.setItem('sl_profile', JSON.stringify(profile));
+    localStorage.setItem('sl_user', JSON.stringify(user));
+    profileData = updated;
+    slToast('Profile updated successfully', 'success');
+    populateProfile();
+  });
+
+  document.getElementById('passwordForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const form = e.target;
+    const current = form.current.value;
+    const next = form.next.value;
+    const confirm = form.confirm.value;
+    if(next.length < 6) return slToast('Password must be at least 6 characters', 'error');
+    if(next !== confirm) return slToast('Passwords do not match', 'error');
+    if(user.password && current !== user.password) return slToast('Current password is incorrect', 'error');
+    user = {...user, password: next};
+    localStorage.setItem('sl_user', JSON.stringify(user));
+    slToast('Password updated successfully', 'success');
+    form.reset();
+  });
+
+  document.getElementById('emailForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const form = e.target;
+    if(form.email.value !== form.confirmEmail.value) return slToast('Email addresses do not match', 'error');
+    user = {...user, email: form.email.value};
+    profile = {...profileData, email: form.email.value};
+    localStorage.setItem('sl_user', JSON.stringify(user));
+    localStorage.setItem('sl_profile', JSON.stringify(profile));
+    profileData = profile;
+    slToast('Email updated successfully', 'success');
+    populateProfile();
+    form.reset();
+  });
+
+  populateProfile();
+</script>
+</body></html>
