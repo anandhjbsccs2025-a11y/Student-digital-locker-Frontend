@@ -96,7 +96,8 @@ function renderLayout(){
     langSelect.addEventListener('change', ()=>{
       localStorage.setItem('sl_lang', langSelect.value);
       document.documentElement.lang = langSelect.value;
-      slToast('Language updated', 'success');
+      // app.js defines slToast; guard to avoid ReferenceError if script load order differs.
+      if(typeof slToast === 'function') slToast('Language updated', 'success');
     });
   }
 }
