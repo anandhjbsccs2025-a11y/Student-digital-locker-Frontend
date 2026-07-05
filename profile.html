@@ -19,6 +19,28 @@
 
 
 
+    <div class="sl-card profile-personal-details">
+      <div class="section-title-row">
+        <h5 class="mb-0"><i class="fas fa-user-graduate me-2"></i>Personal Details</h5>
+      </div>
+      <div class="profile-details-grid">
+        <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value" id="roName">-</div></div>
+        <div class="detail-row"><div class="detail-label">Registration Number</div><div class="detail-value" id="roReg">-</div></div>
+        <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value" id="roEmail">-</div></div>
+        <div class="detail-row"><div class="detail-label">Department</div><div class="detail-value" id="roDept">-</div></div>
+        <div class="detail-row"><div class="detail-label">Class</div><div class="detail-value" id="roCls">-</div></div>
+        <div class="detail-row"><div class="detail-label">UMIS</div><div class="detail-value" id="roUmis">-</div></div>
+        <div class="detail-row"><div class="detail-label">Mobile</div><div class="detail-value" id="roMob">-</div></div>
+      </div>
+    </div>
+
+    <style>
+      .profile-personal-details .profile-details-grid{display:grid;gap:.65rem}
+      .profile-personal-details .detail-row{display:flex;justify-content:space-between;gap:1rem;padding:.6rem .8rem;border:1px solid var(--sl-border);border-radius:12px;background:var(--sl-white)}
+      .profile-personal-details .detail-label{font-size:.85rem;color:var(--sl-muted);font-weight:600}
+      .profile-personal-details .detail-value{font-size:.95rem;color:var(--sl-body-color, var(--sl-text));font-weight:600;text-align:right;word-break:break-word}
+    </style>
+
     <div class="sl-card profile-form-card">
       <h5 class="mb-4"><i class="fas fa-lock me-2"></i>Change Password</h5>
       <form id="passwordForm">
@@ -64,6 +86,7 @@
     // Read-only fields
     document.getElementById('roName').textContent = profileData.name || '-';
     document.getElementById('roReg').textContent = profileData.reg || '-';
+    document.getElementById('roEmail').textContent = profileData.email || '-';
     document.getElementById('roDept').textContent = profileData.dept || '-';
     document.getElementById('roCls').textContent = profileData.cls || '-';
     document.getElementById('roUmis').textContent = profileData.umis || '-';
