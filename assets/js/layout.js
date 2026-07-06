@@ -23,13 +23,21 @@ function renderLayout(){
   if(!app) return;
   const role = app.getAttribute('data-layout'); // 'student' | 'teacher'
 
-  let menu = role==='teacher' ? TEACHER_MENU : STUDENT_MENU;
+  // ---- Role Guard (client-side) ----
   let user = {};
   try {
     user = JSON.parse(localStorage.getItem('sl_user')||'{}');
   } catch (err) {
     console.warn('Layout user init failed:', err);
   }
+  const loggedRole = user.role;
+  if(loggedRole && loggedRole !== role){
+    // Prevent cross-portal access
+    location.href = loggedRole === 'teacher' ? 'teacher-dashboard.html' : 'student-dashboard.html';
+    return;
+  }
+
+  let menu = role==='teacher' ? TEACHER_MENU : STUDENT_MENU;
   const name = user.name || (role==='teacher'?'Teacher':'Student');
 
   const sidebar = `
@@ -80,4 +88,5 @@ function renderLayout(){
     });
   }
 }
+
 document.addEventListener('DOMContentLoaded', renderLayout);
