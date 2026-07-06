@@ -14,10 +14,9 @@ const TEACHER_MENU = [
   ['teacher-dashboard.html','fa-th-large','Dashboard'],
   ['add-student.html','fa-user-plus','Add Student'],
   ['search-student.html','fa-search','Search Student'],
-  ['verify-student.html','fa-user-check','Verify Student'],
-  ['profile.html','fa-user','Profile'],
-  ['notifications.html','fa-bell','Notifications'],
+  ['teacher-profile.html','fa-user','Profile'],
 ];
+
 
 function renderLayout(){
   const app = document.querySelector('[data-layout]');
@@ -45,7 +44,6 @@ function renderLayout(){
     </aside>
     <div class="sl-backdrop"></div>
   `;
-  const showNotifications = role==='teacher';
   const navbar = `
     <header class="sl-navbar">
       <button class="icon-btn d-lg-none" id="sidebarToggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
@@ -62,10 +60,10 @@ function renderLayout(){
         <option value="te">TE</option>
       </select>
       <button class="icon-btn theme-toggle" type="button" onclick="slSetTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark')" aria-label="Toggle theme"><i class="fas fa-sun"></i><i class="fas fa-moon"></i></button>
-      ${showNotifications ? `<a href="notifications.html" class="icon-btn" aria-label="Notifications"><i class="fas fa-bell"></i><span class="badge-dot"></span></a>` : ''}
-      <a href="profile.html" class="icon-btn" aria-label="Profile"><i class="fas fa-user-circle" style="font-size:1.4rem"></i></a>
+      <a href="${role==='teacher'?'teacher-profile.html':'profile.html'}" class="icon-btn" aria-label="Profile"><i class="fas fa-user-circle" style="font-size:1.4rem"></i></a>
     </header>
   `;
+
   const content = app.innerHTML;
   app.classList.add('sl-app');
   app.innerHTML = sidebar + `<main class="sl-main">${navbar}<div class="sl-content">${content}</div></main>`;
