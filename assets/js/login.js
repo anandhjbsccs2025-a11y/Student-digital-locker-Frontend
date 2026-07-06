@@ -38,20 +38,40 @@ function handleRegister(formId){
     const registerNumber = (form.elements.registerNumber?.value || '').trim();
     const department = (form.elements.department?.value || '').trim();
     const year = (form.elements.year?.value || '').trim();
-    const umis = (form.elements.umis?.value || '').trim();
+    const joiningYear = (form.elements.joiningYear?.value || '').trim();
     const email = (form.elements.email?.value || '').trim();
+
     const mobile = (form.elements.mobile?.value || '').trim();
+
     const password = form.elements.password?.value || '';
     const confirmPassword = form.elements.confirmPassword?.value || '';
 
     if(!fullName || fullName.length < 3) return slToast('Enter your full name', 'error');
     if(!registerNumber) return slToast('Register number required', 'error');
     if(!department) return slToast('Select a department', 'error');
-    if(!umis) return slToast('UMIS number required', 'error');
+    if(!joiningYear) return slToast('Joining year required', 'error');
+    const joiningYearNum = Number(joiningYear);
+    if(!Number.isInteger(joiningYearNum) || joiningYearNum < 1900) return slToast('Enter a valid joining year', 'error');
+
     if(!isEmail(email)) return slToast('Enter a valid college email', 'error');
     if(!isMobile(mobile)) return slToast('Enter a valid 10-digit mobile', 'error');
     if(password !== confirmPassword) return slToast('Passwords do not match', 'error');
     if(passwordStrength(password) < 2) return slToast('Password too weak', 'error');
+
+    function romanizeAcademicYear(cls){
+      const v = (cls||'').trim().toUpperCase();
+      if(v.startsWith('I')) return 'I Year';
+      if(v.startsWith('II')) return 'II Year';
+      if(v.startsWith('III')) return 'III Year';
+      if(v.startsWith('IV')) return 'IV Year';
+      // fallback: keep original class string
+      return v || '-';
+    }
+
+    const batchYearStart = joiningYearNum;
+    const batchYearEnd = joiningYearNum + 3;
+    const batchYear = `${batchYearStart} - ${batchYearEnd}`;
+    const currentAcademicYear = romanizeAcademicYear(year);
 
     // Save personal details immediately so profile can become read-only.
     try {
@@ -60,10 +80,12 @@ function handleRegister(formId){
         reg: registerNumber,
         dept: department,
         cls: year,
-        umis,
         mob: mobile,
         email,
+        batchYear,
+        currentAcademicYear,
       };
+
       localStorage.setItem('sl_profile', JSON.stringify(profile));
       localStorage.setItem('sl_profile_completed', JSON.stringify(true));
     } catch (err) {

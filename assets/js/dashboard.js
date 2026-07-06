@@ -70,12 +70,19 @@ function getStudents(){
     if(s) return s;
   }catch(e){}
   const seed = [
-    {id:1, name:'Aarav Kumar', reg:'CS21001', dept:'BSC CS', year:'III-A', umis:'UMIS100001', email:'aarav@college.edu', verified:true},
-    {id:2, name:'Diya Sharma', reg:'IT21014', dept:'BSC IT', year:'III-B', umis:'UMIS100002', email:'diya@college.edu', verified:false},
-    {id:3, name:'Rohan Verma', reg:'AI21033', dept:'AI&ML', year:'II-A', umis:'UMIS100003', email:'rohan@college.edu', verified:true},
-    {id:4, name:'Isha Patel', reg:'CSDA21050', dept:'CSDA', year:'II-B', umis:'UMIS100004', email:'isha@college.edu', verified:false},
+    {id:1, name:'Aarav Kumar', reg:'CS21001', dept:'BSC CS', year:'III-A', joiningYear:2025, graduationYear:2028, batchYear:'2025 - 2028', currentAcademicYear:'III Year', email:'aarav@college.edu', verified:true},
+    {id:2, name:'Diya Sharma', reg:'IT21014', dept:'BSC IT', year:'III-B', joiningYear:2025, graduationYear:2028, batchYear:'2025 - 2028', currentAcademicYear:'III Year', email:'diya@college.edu', verified:false},
+    {id:3, name:'Rohan Verma', reg:'AI21033', dept:'AI&ML', year:'II-A', joiningYear:2026, graduationYear:2029, batchYear:'2026 - 2029', currentAcademicYear:'II Year', email:'rohan@college.edu', verified:true},
+    {id:4, name:'Isha Patel', reg:'CSDA21050', dept:'CSDA', year:'II-B', joiningYear:2026, graduationYear:2029, batchYear:'2026 - 2029', currentAcademicYear:'II Year', email:'isha@college.edu', verified:false},
   ];
   localStorage.setItem(STUD_KEY, JSON.stringify(seed));
   return seed;
 }
-function saveStudents(list){ localStorage.setItem(STUD_KEY, JSON.stringify(list)) }
+function saveStudents(list){
+  // Normalize/remap to current schema (remove legacy UMIS if present)
+  const normalized = (list||[]).map(s => {
+    const { umis, ...rest } = s || {};
+    return rest;
+  });
+  localStorage.setItem(STUD_KEY, JSON.stringify(normalized))
+}

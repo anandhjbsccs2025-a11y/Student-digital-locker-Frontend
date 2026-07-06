@@ -15,9 +15,10 @@
       <div class="col-md-6"><label class="form-label">Register Number</label><input name="reg" class="form-control" required></div>
       <div class="col-md-6"><label class="form-label">Department</label>
 <select name="dept" class="form-select"><option>BSC CS</option><option>BSC IT</option><option>AI&ML</option><option>CSDA</option><option>BCOM</option><option>MBA</option></select>
-<div class="col-md-6"><label class="form-label">Year</label><input name="year" class="form-control"></div>
-      <div class="col-md-6"><label class="form-label">UMIS Number</label><input name="umis" class="form-control"></div>
+      <div class="col-md-6"><label class="form-label">Year</label><input name="year" class="form-control"></div>
+      <div class="col-md-6"><label class="form-label">Joining Year</label><input name="joiningYear" class="form-control" inputmode="numeric"></div>
       <div class="col-md-6"><label class="form-label">Email</label><input name="email" type="email" class="form-control" required></div>
+
     </div>
     <div class="mt-4 d-flex gap-2 flex-wrap">
       <button class="btn btn-primary" type="submit"><i class="fas fa-save me-1"></i>Save</button>
@@ -37,12 +38,31 @@
 <script src="assets/js/app.js"></script><script src="assets/js/layout.js"></script><script src="assets/js/dashboard.js"></script><script src="assets/js/validation.js"></script>
 <script>
   const f = document.getElementById('addStudentForm');
+  function romanizeAcademicYear(cls){
+    const v = (cls||'').trim().toUpperCase();
+    if(v.startsWith('I')) return 'I Year';
+    if(v.startsWith('II')) return 'II Year';
+    if(v.startsWith('III')) return 'III Year';
+    if(v.startsWith('IV')) return 'IV Year';
+    return v || '-';
+  }
+
   function saveStudent(verified){
     const d = Object.fromEntries(new FormData(f).entries());
     if(!d.name || !d.reg || !isEmail(d.email)) return slToast('Please complete all fields correctly','error');
+
+    const joiningYearNum = Number(d.joiningYear);
+    if(!Number.isInteger(joiningYearNum) || joiningYearNum < 1900) return slToast('Enter a valid joining year','error');
+
+    const batchYear = `${joiningYearNum} - ${joiningYearNum + 3}`;
+    const currentAcademicYear = romanizeAcademicYear(d.year);
+
+    delete d.umis;
+
     const list = getStudents();
-    list.push({id:Date.now(), ...d, verified});
+    list.push({id:Date.now(), ...d, batchYear, currentAcademicYear, verified});
     saveStudents(list); f.reset();
+
     new bootstrap.Modal(document.getElementById('okModal')).show();
   }
   f.addEventListener('submit', e=>{ e.preventDefault(); saveStudent(false); });

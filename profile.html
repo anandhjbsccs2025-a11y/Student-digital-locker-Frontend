@@ -29,8 +29,11 @@
         <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value" id="roEmail">-</div></div>
         <div class="detail-row"><div class="detail-label">Department</div><div class="detail-value" id="roDept">-</div></div>
         <div class="detail-row"><div class="detail-label">Class</div><div class="detail-value" id="roCls">-</div></div>
-        <div class="detail-row"><div class="detail-label">UMIS</div><div class="detail-value" id="roUmis">-</div></div>
+        <div class="detail-row"><div class="detail-label">Batch Year</div><div class="detail-value" id="roBatchYear">-</div></div>
+        <div class="detail-row"><div class="detail-label">Current Academic Year</div><div class="detail-value" id="roCurrentAcademicYear">-</div></div>
+
         <div class="detail-row"><div class="detail-label">Mobile</div><div class="detail-value" id="roMob">-</div></div>
+
       </div>
     </div>
 
@@ -79,7 +82,7 @@
     document.getElementById('profileReg').value = profileData.reg || '';
     document.getElementById('profileDept').value = profileData.dept || '';
     document.getElementById('profileCls').value = profileData.cls || '';
-    document.getElementById('profileUmis').value = profileData.umis || '';
+
     document.getElementById('profileMob').value = profileData.mob || '';
     document.getElementById('profileEmailInput').value = profileData.email || '';
 
@@ -89,8 +92,12 @@
     document.getElementById('roEmail').textContent = profileData.email || '-';
     document.getElementById('roDept').textContent = profileData.dept || '-';
     document.getElementById('roCls').textContent = profileData.cls || '-';
-    document.getElementById('roUmis').textContent = profileData.umis || '-';
+
+    document.getElementById('roBatchYear').textContent = profileData.batchYear || '-';
+    document.getElementById('roCurrentAcademicYear').textContent = profileData.currentAcademicYear || '-';
+
     document.getElementById('roMob').textContent = profileData.mob || '-';
+
   }
 
 
