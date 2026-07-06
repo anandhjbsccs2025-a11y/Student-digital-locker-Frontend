@@ -9,11 +9,13 @@
 </head><body>
 <div data-layout="student">
   <div class="welcome-hero">
-    <div><h3>Welcome back, <span data-user-name>Student</span> 👋</h3><p>Manage all your certificates and documents in one secure place.</p></div>
-
+    <div><h3>Welcome back, <span data-user-name>Student</span></h3><p>Manage all your certificates and documents in one secure place.</p></div>
   </div>
   <div class="stat-row">
-
+    <a href="personal-documents.html" class="sl-card doc-card text-decoration-none text-reset">
+      <div class="sl-icon-circle"><i class="fas fa-id-card"></i></div>
+      <h5>Personal Documents</h5><p class="text-muted" data-doc-count="personal">0 documents</p>
+    </a>
     <a href="online-certificates.html" class="sl-card doc-card text-decoration-none text-reset">
       <div class="sl-icon-circle"><i class="fas fa-cloud"></i></div>
       <h5>Online Certificates</h5><p class="text-muted" data-doc-count="online">0 documents</p>
@@ -28,5 +30,8 @@
     </a>
   </div>
 </div>
+<script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore-compat.js"></script>
+<script src="assets/js/firebase-config.js"></script><script src="assets/js/firebase.js"></script>
 <script src="assets/js/app.js"></script><script src="assets/js/layout.js"></script><script src="assets/js/dashboard.js"></script>
 </body></html>

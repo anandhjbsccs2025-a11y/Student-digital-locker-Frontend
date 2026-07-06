@@ -2,7 +2,7 @@
 const STUDENT_MENU_BASE = [
   ['student-dashboard.html','fa-th-large','Dashboard'],
   ['profile.html','fa-user','Profile'],
-  // Removed Personal Documents from dashboard/sidebar as requested.
+  ['personal-documents.html','fa-id-card','Personal Documents'],
   ['online-certificates.html','fa-cloud','Online Certificates'],
   ['offline-certificates.html','fa-folder-open','Offline Certificates'],
   ['academic-certificates.html','fa-graduation-cap','Academic Certificates'],
@@ -83,6 +83,11 @@ function renderLayout(){
   const content = app.innerHTML;
   app.classList.add('sl-app');
   app.innerHTML = sidebar + `<main class="sl-main">${navbar}<div class="sl-content">${content}</div></main>`;
+
+  const page = location.pathname.split('/').pop() || 'index.html';
+  app.querySelectorAll('.sl-sidebar a.nav-item').forEach(a=>{
+    if(a.getAttribute('href') === page) a.classList.add('active');
+  });
 
   const langSelect = app.querySelector('.lang-select');
   if(langSelect){

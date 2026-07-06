@@ -13,22 +13,32 @@
       <button class="btn btn-primary" onclick="doDownload()"><i class="fas fa-download me-1"></i>Download</button>
       <button class="btn btn-outline-primary" onclick="window.print()"><i class="fas fa-print me-1"></i>Print</button>
       <button class="btn btn-outline-danger" onclick="doDelete()"><i class="fas fa-trash me-1"></i>Delete</button>
-      <button class="btn btn-link" onclick="history.back()">← Back</button>
+      <button class="btn btn-link" onclick="history.back()">&larr; Back</button>
     </div>
   </div>
   <div class="sl-card"><div id="viewer" class="text-center"></div></div>
 </div>
 <script src="assets/js/app.js"></script><script src="assets/js/layout.js"></script><script src="assets/js/dashboard.js"></script>
 <script>
-  const id = +new URLSearchParams(location.search).get('id');
-  const d = getDocs().find(x=>x.id===id);
+  function escapeHtml(value){
+    return String(value || '').replace(/[&<>"']/g, ch => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#39;'
+    }[ch]));
+  }
+
+  const id = new URLSearchParams(location.search).get('id');
+  const d = getDocs().find(x=>String(x.id)===String(id));
   if(!d){ document.getElementById('viewer').innerHTML = '<p class="text-muted p-4">Document not found.</p>'; }
   else {
     document.getElementById('docTitle').textContent = d.title;
     const v = document.getElementById('viewer');
-    if(d.type && d.type.startsWith('image/')) v.innerHTML = `<img src="${d.dataUrl}" class="img-fluid rounded">`;
-    else if(d.type==='application/pdf') v.innerHTML = `<iframe src="${d.dataUrl}" style="width:100%;height:75vh;border:0"></iframe>`;
-    else v.innerHTML = `<div class="p-5"><i class="fas fa-file fa-3x text-primary mb-3"></i><h5>${d.title}</h5></div>`;
+    if(d.type && d.type.startsWith('image/')) v.innerHTML = `<img src="${d.dataUrl}" class="img-fluid rounded" alt="${escapeHtml(d.title)} preview">`;
+    else if(d.type==='application/pdf') v.innerHTML = `<iframe title="${escapeHtml(d.title)} preview" src="${d.dataUrl}" style="width:100%;height:75vh;border:0"></iframe>`;
+    else v.innerHTML = `<div class="p-5"><i class="fas fa-file fa-3x text-primary mb-3"></i><h5>${escapeHtml(d.title)}</h5></div>`;
   }
   function doDownload(){ if(d){ const a=document.createElement('a'); a.href=d.dataUrl; a.download=d.filename||d.title; a.click(); } }
   function doDelete(){ if(!d) return; if(!confirm('Delete this document?')) return; deleteDoc(d.id); slToast('Deleted','success'); setTimeout(()=>history.back(),500); }

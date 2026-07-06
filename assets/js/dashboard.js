@@ -4,9 +4,39 @@
 const DOC_KEY = 'sl_docs';
 function getDocs(){ try{return JSON.parse(localStorage.getItem(DOC_KEY)||'[]')}catch(e){return []} }
 function saveDocs(list){ localStorage.setItem(DOC_KEY, JSON.stringify(list)) }
-function addDoc(doc){ const l = getDocs(); l.push(Object.assign({id:Date.now(), uploaded:new Date().toISOString()}, doc)); saveDocs(l); return l }
-function deleteDoc(id){ saveDocs(getDocs().filter(d=>d.id!==id)) }
+function addDoc(doc){
+  const l = getDocs();
+  const next = Object.assign({
+    id:Date.now().toString(36) + Math.random().toString(36).slice(2),
+    uploaded:new Date().toISOString(),
+    status:'Uploaded'
+  }, doc);
+  l.push(next);
+  saveDocs(l);
+  syncDocMetadata(next, 'upsert');
+  return next;
+}
+function updateDoc(id, updates){
+  const l = getDocs();
+  const index = l.findIndex(d=>String(d.id)===String(id));
+  if(index === -1) return null;
+  l[index] = Object.assign({}, l[index], updates, {updated:new Date().toISOString(), status:'Updated'});
+  saveDocs(l);
+  syncDocMetadata(l[index], 'upsert');
+  return l[index];
+}
+function deleteDoc(id){
+  const existing = getDocs().find(d=>String(d.id)===String(id));
+  saveDocs(getDocs().filter(d=>String(d.id)!==String(id)));
+  if(existing) syncDocMetadata(existing, 'delete');
+}
 function countByCategory(cat){ return getDocs().filter(d=>d.category===cat).length }
+
+function syncDocMetadata(doc, action){
+  const bridge = window.StudentLockerFirebase;
+  if(!bridge || typeof bridge.syncDocumentMetadata !== 'function') return;
+  bridge.syncDocumentMetadata(doc, action).catch(()=>{});
+}
 
 // Render count badges on dashboard cards
 document.addEventListener('DOMContentLoaded', ()=>{

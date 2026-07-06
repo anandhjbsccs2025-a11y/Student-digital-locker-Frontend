@@ -1,0 +1,16 @@
+{
+  "name": "student-digital-locker-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static frontend for the Student Details Locker portal.",
+  "scripts": {
+    "start": "npx http-server . -p 4173",
+    "check": "node --check assets/js/app.js && node --check assets/js/layout.js && node --check assets/js/dashboard.js && node --check assets/js/doc-page.js && node --check assets/js/firebase-config.js && node --check assets/js/firebase.js"
+  },
+  "dependencies": {
+    "firebase": "^12.15.0"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
